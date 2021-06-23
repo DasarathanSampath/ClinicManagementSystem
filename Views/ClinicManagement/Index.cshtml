@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Dash Board";
+}
+
+<div>
+    <br />
+    <a asp-controller="DoctorsData" asp-action="Index">
+        <h1><span class="badge badge-info">Doctors</span></h1>
+    </a>
+    <br />
+    <a asp-controller="PatientsData" asp-action="Index">
+        <h1><span class="badge badge-info">Patients</span></h1>
+    </a>
+    <br />
+    <a asp-controller="ClinicManagement" asp-action="BookAnAppointment">
+        <h1><span class="badge badge-info">Book an Appointment</span></h1>
+    </a>
+    <br />
+    <a asp-controller="ClinicManagement" asp-action="CancelAnAppointment">
+        <h1><span class="badge badge-info">Cancel an Appointment</span></h1>
+    </a>
+</div>

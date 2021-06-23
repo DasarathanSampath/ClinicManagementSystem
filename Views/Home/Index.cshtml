@@ -1,0 +1,47 @@
+﻿@model ClinicManagement.ClinicModel.User
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+@*@model ClinicManagement.Models.Login;*@
+
+<div>
+    <h1> Home Page </h1>
+    <div class="row">
+        <div class="col-md-4">
+            <form id="login" asp-action="Login">
+                @*@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+            {*@
+                <div class="form-group">
+                    <label asp-for="LoginEmail" class="control-label"></label>
+                    <input asp-for="LoginEmail" class="form-control" />
+                    <span asp-validation-for="LoginEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LoginPassword" class="control-label"></label>
+                    <input asp-for="LoginPassword" class="form-control" type="password" />
+                    <span asp-validation-for="LoginPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Login" class="btn btn-primary" />
+                </div>
+            </form>
+            @if (ViewBag.Message != null)
+            {
+                <script id="alert" type="text/javascript">
+
+                            window.onload = function () {
+                                alert("@ViewBag.Message");
+                            };
+                </script>
+            }
+            
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

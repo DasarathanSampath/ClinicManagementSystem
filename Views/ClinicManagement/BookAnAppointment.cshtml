@@ -1,0 +1,98 @@
+﻿@model ClinicManagement.ClinicModel.Appointment
+@*@model ClinicManagement.Models.AppointmentDropDowns*@
+
+@{
+    ViewData["Title"] = "Book An Appointment";
+}
+
+<h1>Book An Appointment</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="BookAnAppointment">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BkdPatient" class="control-label"></label>
+                <select id="patients" asp-for="BkdPatient" class="form-control"></select>                
+                <span asp-validation-for="BkdPatient" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppDoctor" class="control-label"></label>
+                <select id="doctors" asp-for="AppDoctor" class="form-control"></select>
+                <span asp-validation-for="AppDoctor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BookingDate" class="control-label"></label>
+                <input id="bookingDate" type="date" asp-for="BookingDate" class="form-control" />
+                <span asp-validation-for="BookingDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BookingSlot" class="control-label"></label>
+                <select id="slots" asp-for="BookingSlot" class="form-control"></select>
+                <span asp-validation-for="BookingSlot" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="BookAnAppointment" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="ClinicManagement" asp-action="Index">Back to Dash Board</a>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Dropdown/GetPatients",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Select a Patient</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i] + '">' + data[i] + '</option>';
+                }
+                $("#patients").html(s);
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Dropdown/GetDoctors",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Select a Doctor</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i] + '">' + data[i] + '</option>';
+                }
+                $("#doctors").html(s);
+            }
+        });
+        $("#doctors" && "#bookingDate").change(function (e) {
+            var getUserID = $('#doctors').val();
+            var getbookingDate = $('#bookingDate').val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Dropdown/GetSlots",
+                    data: { doctor: getUserID, date: getbookingDate },
+                    success: function (data) {
+                        var s = '<option value="-1">Available Slots</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i] + '">' + data[i] + '</option>';
+                        }
+                        $("#slots").html(s);
+                    }
+                });         
+            
+        });
+    });
+        
+    
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
