@@ -10,24 +10,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-//using Xceed.Wpf.Toolkit;
-
 namespace ClinicManagement.Controllers
 {
     public class HomeController : Controller
-    {
-        //Login l = new Login();       
-
+    {   
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
-
         public IActionResult Index()
-        {            
-            if (HttpContext.Session.GetString("loggedInEmail")  == null)
+        {
+            if (HttpContext.Session.GetString("loggedInEmail") == null)
             {
                 return View();
             }
@@ -36,19 +30,9 @@ namespace ClinicManagement.Controllers
                 return RedirectToAction("Index", "ClinicManagement");
             }
         }
-
-        //public IActionResult Privacy()
-        //{
-        //    return View();
-        //}
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-        
-        public IActionResult Login(Login l)
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]        
+        [HttpPost]
+        public IActionResult Index(Login l)
         {
             using (var db = new ClinicManagementContext())
             {
@@ -58,37 +42,25 @@ namespace ClinicManagement.Controllers
                 if (obj != null)
                 {                    
                     string loggedInEmail = obj.FirstName;
-                    HttpContext.Session.SetString("loggedInEmail", loggedInEmail);
-                    ViewBag.Message = 1;
+                    HttpContext.Session.SetString("loggedInEmail", loggedInEmail);                    
+                    TempData["message"] = "You have logged in successfully";
                     return RedirectToAction("Index", "ClinicManagement");
-                    //return View();
-                    //return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    ViewBag.Message = 0;
-                    return RedirectToAction("Index", "Home");
-                    //return View();
+                    ViewBag.Message = "Bad user name or password";
+                    return View();
                 }
             }
         }
-        //[HttpPost]
-        //public IActionResult LoginAfterAlert(string l)
-        //{
-        //    if (l == "1")
-        //    {
-        //        return RedirectToAction("Index", "ClinicManagement");
-        //    }
-        //    else
-        //    {
-        //        return RedirectToAction("Index", "Home");
-        //    }
-        //}
-
         public IActionResult LogOut()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

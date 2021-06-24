@@ -40,14 +40,6 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "Extended.Wpf.Toolkit": {
-              "target": "Package",
-              "version": "[4.1.0, )"
-            },
-            "Microsoft.AspNet.Mvc": {
-              "target": "Package",
-              "version": "[5.2.7, )"
-            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[5.0.7, )"
@@ -72,17 +64,9 @@
               "target": "Package",
               "version": "[5.0.2, )"
             },
-            "PagedList": {
-              "target": "Package",
-              "version": "[1.17.0, )"
-            },
             "PagedList.Core.Mvc": {
               "target": "Package",
               "version": "[3.0.0, )"
-            },
-            "PagedList.Mvc": {
-              "target": "Package",
-              "version": "[4.5.0, )"
             },
             "System.Runtime": {
               "target": "Package",

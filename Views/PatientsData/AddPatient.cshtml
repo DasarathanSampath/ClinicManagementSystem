@@ -35,12 +35,21 @@
             <div class="form-group">
                 <input type="submit" value="AddPatient" class="btn btn-primary" />
             </div>
+            @if (ViewBag.Duplicatekey != null)
+            {
+                <script id="alert" type="text/javascript">
+
+                            window.onload = function () {
+                                alert("@ViewBag.Duplicatekey");
+                            };
+                </script>
+            }
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Patients">Back to Patients List</a>
+    <a asp-controller="PatientsData" asp-action="Index">Back to Patients List</a>
 </div>
 
 @section Scripts {

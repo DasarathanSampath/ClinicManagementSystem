@@ -3,18 +3,16 @@ using ClinicManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PagedList;
-using PagedList.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc.Html;
 
 namespace ClinicManagement.Controllers
 {
     public class DoctorsDataController : Controller
     {
-        ClinicManagementContext db = new ClinicManagementContext();
+        readonly ClinicManagementContext db = new ClinicManagementContext();        
         public ActionResult Index()
         {
             if (HttpContext.Session.GetString("loggedInEmail") != null)
@@ -26,7 +24,6 @@ namespace ClinicManagement.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-
         [HttpPost]
         public ActionResult Index(int currentPageIndex)
         {
@@ -40,14 +37,12 @@ namespace ClinicManagement.Controllers
             }
 
         }
-
         private DoctorsModel GetDoctors(int currentPage)
         {
             int maxRows = 3;
-            using (ClinicManagementContext entities = new ClinicManagementContext())
+            using (var entities = new ClinicManagementContext())
             {
-                DoctorsModel customerModel = new DoctorsModel();
-
+                var customerModel = new DoctorsModel();
                 customerModel.Doctors = (from doctor in entities.Doctors
                                          select doctor)
                             .OrderBy(doctor => doctor.DoctorName)
@@ -87,8 +82,10 @@ namespace ClinicManagement.Controllers
                     }
                     catch(Exception)
                     {
-                        throw;
+                        ViewBag.Duplicatekey = "Doctor name already exist.";
+                        return View();
                     }
+                    TempData["message"] = "Doctor name added successfully";
                     return RedirectToAction("Index");
                 }
                 else
@@ -106,7 +103,15 @@ namespace ClinicManagement.Controllers
             if (HttpContext.Session.GetString("loggedInEmail") != null)
             {
                 ViewBag.id = id;
-                return View(this.GetDoctorAppointments(1, id));
+                if (this.GetDoctorAppointments(1, id) != null)
+                {
+                    return View(this.GetDoctorAppointments(1, id));
+                }
+                else
+                {
+                    TempData["appointments"] = "No Appointments found";
+                    return RedirectToAction("Index", "DoctorsData");
+                }
             }
             else
             {
@@ -132,20 +137,21 @@ namespace ClinicManagement.Controllers
             using (ClinicManagementContext entities = new ClinicManagementContext())
             {
                 AppointmentsModel customerModel = new AppointmentsModel();
-                //AppointmentsModel dummyEntities = new AppointmentsModel();
-                //dummyEntities.Appointments = entities.Appointments.Where(x => x.AppDoctor == id).ToList();
+                var dummy = entities.Appointments.Where(x => x.AppDoctor == id);
+                if (!dummy.Any())
+                {
+                    return null;
+                }
                 customerModel.Appointments = (from appointment in entities.Appointments
-                                         select appointment)
-                            .Where(x => x.AppDoctor == id)
-                            .OrderByDescending(appointment => appointment.BookingDate)
-                            .Skip((currentPage - 1) * maxRows)
-                            .Take(maxRows).ToList();
+                                              select appointment)
+                                                .Where(x => x.AppDoctor == id)
+                                                .OrderByDescending(appointment => appointment.BookingDate)
+                                                .Skip((currentPage - 1) * maxRows)
+                                                .Take(maxRows).ToList();
 
-                double pageCount = (double)((decimal)entities.Appointments.Count() / Convert.ToDecimal(maxRows));
+                double pageCount = (double)((decimal)dummy.Count() / Convert.ToDecimal(maxRows));
                 customerModel.PageCount = (int)Math.Ceiling(pageCount);
-
                 customerModel.CurrentPageIndex = currentPage;
-
                 return customerModel;
             }
         }

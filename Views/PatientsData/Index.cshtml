@@ -4,54 +4,72 @@
 *@
 @{
 }
-    <div class="container" style="margin-top: 20px;">
-        @using (Html.BeginForm("Index", "PatientsData", FormMethod.Post))
-        {
-            <h4>Patients</h4>
-            <hr />
-            <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered">
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Contact #</th>
-                    <th>Address</th>
-                </tr>
-                @foreach (var patient in Model.Patients)
-                {
-            <tr>
-                <td>@patient.PatientName</td>
-                <td>@patient.PatientAge</td>
-                <td>@patient.PatientContactNumber</td>
-                <td>@patient.PatientAddress</td>
-                <td><a asp-action="PatientAppointments" asp-route-id="@patient.PatientName">Appointments</a></td>
-            </tr>
-                }
-            </table>
-            <br />
-            <table cellpadding="0" cellspacing="0">
-                <tr>
-                    @for (int i = 1; i <= Model.PageCount; i++)
-                    {
-                        <td style="padding: 5px 10px 5px 10px;  border: 1px solid #ccc;">
-                            @if (i != Model.CurrentPageIndex)
-                            {
-                                <a href="javascript:PagerClick(@i);">@i</a>
-                            }
-                            else
-                            {
-                                <span>@i</span>
-                            }
-                        </td>
-                    }                    
-                </tr>
-            </table>
-            <input type="hidden" id="hfCurrentPageIndex" name="currentPageIndex" />
-        }
-        <script type="text/javascript">
-            function PagerClick(index) {
-                document.getElementById("hfCurrentPageIndex").value = index;
-                document.forms[0].submit();
-            }
+<div class="container" style="margin-top: 20px;">
+    @if (TempData["message"] != null)
+    {
+        <script id="alert" type="text/javascript">
+             window.onload = function () {
+                alert("@TempData["message"]");
+             };
         </script>
-    </div>
-    <h2><a asp-controller="PatientsData" asp-action="AddPatient">Add a Patient</a></h2>
+
+    }
+    @if (TempData["appointments"] != null)
+    {
+        <script id="alert" type="text/javascript">
+             window.onload = function () {
+                alert("@TempData["appointments"]");
+             };
+        </script>
+
+    }
+    @using (Html.BeginForm("Index", "PatientsData", FormMethod.Post))
+    {
+        <h4>Patients</h4>
+        <hr />
+        <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered">
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Contact #</th>
+                <th>Address</th>
+            </tr>
+            @foreach (var patient in Model.Patients)
+            {
+                <tr>
+                    <td>@patient.PatientName</td>
+                    <td>@patient.PatientAge</td>
+                    <td>@patient.PatientContactNumber</td>
+                    <td>@patient.PatientAddress</td>
+                    <td><a asp-action="PatientAppointments" asp-route-id="@patient.PatientName">Appointments</a></td>
+                </tr>
+            }
+        </table>
+        <br />
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <td style="padding: 5px 10px 5px 10px;  border: 1px solid #ccc;">
+                        @if (i != Model.CurrentPageIndex)
+                        {
+                            <a href="javascript:PagerClick(@i);">@i</a>
+                        }
+                        else
+                        {
+                            <span>@i</span>
+                        }
+                    </td>
+                }
+            </tr>
+        </table>
+        <input type="hidden" id="hfCurrentPageIndex" name="currentPageIndex" />
+    }
+    <script type="text/javascript">
+        function PagerClick(index) {
+            document.getElementById("hfCurrentPageIndex").value = index;
+            document.forms[0].submit();
+        }
+    </script>
+</div>
+<h2><a asp-controller="PatientsData" asp-action="AddPatient">Add a Patient</a></h2>

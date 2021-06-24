@@ -9,7 +9,7 @@ namespace ClinicManagement.Controllers
 {
     public class ClinicManagementController : Controller
     {
-        ClinicManagementContext db = new ClinicManagementContext();
+        readonly ClinicManagementContext db = new ClinicManagementContext();
 
         //public IEnumerable<Patient> PatientsList { get; private set; }
 
@@ -130,6 +130,7 @@ namespace ClinicManagement.Controllers
         [HttpPost]
         public IActionResult BookAnAppointment(Appointment a)
         {
+            //a.BookingSlot = Convert.ToInt32(a.BookingSlot);
             if (HttpContext.Session.GetString("loggedInEmail") != null)
             {
                 if (a != null)

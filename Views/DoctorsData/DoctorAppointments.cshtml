@@ -7,21 +7,65 @@
 <div class="container" style="margin-top: 20px;">
     @using (Html.BeginForm("DoctorAppointments", "DoctorsData", FormMethod.Post))
     {
-    <h4>Doctors</h4>
+    <h4>@Model.Appointments[0].AppDoctor</h4>
     <hr />
     <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered">
         <tr>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Contact #</th>
-            <th>Specialization</th>
+            <th>Booking Number</th>
+            <th>Date</th>
+            <th>Booking Slot #</th>
+            <th>Patient Name</th>
         </tr>
         @foreach (var appointment in Model.Appointments)
         {
         <tr>
             <td>@appointment.BookingNumber</td>
-            <td>@appointment.BookingDate</td>
-            <td>@appointment.BookingSlot</td>
+            <td>@appointment.BookingDate.Value.ToShortDateString()</td>
+            <td>
+                @if (@appointment.BookingSlot == 1)
+                {
+                    <span>10AM:11AM</span>
+                }
+                else
+                {
+                    if (@appointment.BookingSlot == 2)
+                    {
+                        <span>12AM:01PM</span>
+                    }
+                    else
+                    {
+                        if (@appointment.BookingSlot == 3)
+                        {
+                            <span>12AM:01PM</span>
+                        }
+                        else
+                        {
+                            if (@appointment.BookingSlot == 4)
+                            {
+                                <span>02PM:03PM</span>
+                            }
+                            else
+                            {
+                                if (@appointment.BookingSlot == 5)
+                                {
+                                    <span>03PM:04PM</span>
+                                }
+                                else
+                                {
+                                    if (@appointment.BookingSlot == 6)
+                                    {
+                                        <span>04PM:05PM</span>
+                                    }
+                                    else
+                                    {
+                                        @appointment.BookingSlot
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            </td>
             <td>@appointment.BkdPatient</td>            
         </tr>
         }

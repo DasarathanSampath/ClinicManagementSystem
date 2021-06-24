@@ -11,7 +11,7 @@ namespace ClinicManagement.Controllers
 {
     public class PatientsDataController : Controller
     {
-        ClinicManagementContext db = new ClinicManagementContext();
+        readonly ClinicManagementContext db = new ClinicManagementContext();
         public ActionResult Index()
         {
             if (HttpContext.Session.GetString("loggedInEmail") != null)
@@ -23,7 +23,6 @@ namespace ClinicManagement.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-
         [HttpPost]
         public ActionResult Index(int currentPageIndex)
         {
@@ -37,14 +36,12 @@ namespace ClinicManagement.Controllers
             }
 
         }
-
         private PatientsModel GetPatients(int currentPage)
         {
             int maxRows = 3;
-            using (ClinicManagementContext entities = new ClinicManagementContext())
+            using (var entities = new ClinicManagementContext())
             {
-                PatientsModel customerModel = new PatientsModel();
-
+                var customerModel = new PatientsModel();
                 customerModel.Patients = (from patient in entities.Patients
                                          select patient)
                             .OrderBy(patient => patient.PatientName)
@@ -77,8 +74,17 @@ namespace ClinicManagement.Controllers
             {
                 if (p != null)
                 {
-                    db.Patients.Add(p);
-                    db.SaveChanges();
+                    try
+                    {                    
+                        db.Patients.Add(p);
+                        db.SaveChanges();
+                    }
+                    catch(Exception)
+                    {
+                        ViewBag.Duplicatekey = "Patient name already exist.";
+                        return View();
+                    }
+                    TempData["message"] = "Patient name added successfully";
                     return RedirectToAction("Index");
                 }
                 else
@@ -89,6 +95,66 @@ namespace ClinicManagement.Controllers
             else
             {
                 return RedirectToAction("Index", "Home");
+            }
+        }
+        public IActionResult PatientAppointments(string id)
+        {
+            if (HttpContext.Session.GetString("loggedInEmail") != null)
+            {
+                ViewBag.id = id;
+                if(this.GetPatientsAppointments(1, id) != null)
+                {
+                    return View(this.GetPatientsAppointments(1, id));
+                }
+                else
+                {
+                    TempData["appointments"] = "No Appointments found";
+                    return RedirectToAction("Index", "PatientsData");
+                }
+                    
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [HttpPost]
+        public IActionResult PatientAppointments(int currentPageIndex, string id)
+        {
+            if (HttpContext.Session.GetString("loggedInEmail") != null)
+            {
+                ViewBag.id = id;
+                return View(this.GetPatientsAppointments(currentPageIndex, id));
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        private AppointmentsModel GetPatientsAppointments(int currentPage, string id)
+        {
+            int maxRows = 3;
+            using (ClinicManagementContext entities = new ClinicManagementContext())
+            {
+                AppointmentsModel customerModel = new AppointmentsModel();
+                var dummy = entities.Appointments.Where(x => x.BkdPatient == id);
+                if(!dummy.Any())
+                {
+                    return null;
+                }
+                customerModel.Appointments = (from appointment in entities.Appointments
+                                              select appointment)
+                                                .Where(x => x.BkdPatient == id)
+                                                .OrderByDescending(appointment => appointment.BookingDate)
+                                                .Skip((currentPage - 1) * maxRows)
+                                                .Take(maxRows).ToList();
+
+                double pageCount = (double)((decimal)dummy.Count() / Convert.ToDecimal(maxRows));
+                customerModel.PageCount = (int)Math.Ceiling(pageCount);
+
+                customerModel.CurrentPageIndex = currentPage;
+
+                return customerModel;
             }
         }
     }

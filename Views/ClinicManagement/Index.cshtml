@@ -2,24 +2,34 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+}
+@{
     ViewData["Title"] = "Dash Board";
 }
 
 <div>
+    @if (TempData["message"] != null)
+        {
+            <script id="alert" type="text/javascript">
+             window.onload = function () {
+                alert("@TempData["message"]");
+             };
+            </script>            
+        }
     <br />
     <a asp-controller="DoctorsData" asp-action="Index">
-        <h1><span class="badge badge-info">Doctors</span></h1>
+        <span style="font-size: 2.5rem; margin: 0.5rem 0 0.5rem 0;" class="badge badge-info">Doctors</span>
     </a>
     <br />
     <a asp-controller="PatientsData" asp-action="Index">
-        <h1><span class="badge badge-info">Patients</span></h1>
+        <span style="font-size: 2.5rem; margin: 0.5rem 0 0.5rem 0;" class="badge badge-info">Patients</span>
     </a>
     <br />
     <a asp-controller="ClinicManagement" asp-action="BookAnAppointment">
-        <h1><span class="badge badge-info">Book an Appointment</span></h1>
+        <span style="font-size: 2.5rem; margin: 0.5rem 0 0.5rem 0;" class="badge badge-info">Book an Appointment</span>
     </a>
     <br />
     <a asp-controller="ClinicManagement" asp-action="CancelAnAppointment">
-        <h1><span class="badge badge-info">Cancel an Appointment</span></h1>
+        <span style="font-size: 2.5rem; margin: 0.5rem 0 0.5rem 0;" class="badge badge-info">Cancel an Appointment</span>
     </a>
 </div>
